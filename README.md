@@ -51,6 +51,6 @@ services:
 
 ## Reloading certificates
 
-If using ircss, when the certificate has changed, issue a SIGHUP to the image:
+If using ircs, when the certificate has changed, issue a SIGHUP to the image:
 
 `docker  kill -s HUP soju`
