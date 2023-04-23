@@ -14,5 +14,6 @@ VOLUME /data
 COPY --from=0 /src/soju/soju /usr/local/bin/
 COPY --from=0 /src/soju/sojuctl /usr/local/bin/
 
-COPY docker-entrypoint.sh /usr/local/bin/
-ENTRYPOINT ["docker-entrypoint.sh"]
+WORKDIR /data
+
+CMD ["soju", "-config", "/data/soju.cfg"]
