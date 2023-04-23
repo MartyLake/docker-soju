@@ -3,7 +3,7 @@ FROM golang:alpine
 WORKDIR /src
 
 RUN apk update && apk add --no-cache git gcc make musl-dev scdoc && \
-    git clone https://git.sr.ht/~emersion/soju && cd soju && \
+    git clone --branch v0.6 https://git.sr.ht/~emersion/soju && cd soju && \
     go build -ldflags "-linkmode external -extldflags -static" ./cmd/soju && \
     go build -ldflags "-linkmode external -extldflags -static" ./cmd/sojuctl
 
