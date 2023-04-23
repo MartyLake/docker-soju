@@ -6,22 +6,31 @@ soju is an IRC bouncer - https://git.sr.ht/~emersion/soju
 
 ## Usage
 
-### Environment variables
+Provide a configuration file in a folder that maps to `/data`. See https://git.sr.ht/~emersion/soju/tree/master/item/doc/soju.1.scd for instructions on how to create such configuration file.
 
-**USER** - the admin (main) user
+such config file could like like this:
 
-**PASSWORD** - the password for the admin user
+```
+listen ircs://0.0.0.0:6697
+listen irc+insecure://0.0.0.0:6667
+#listen unix+admin:///run/soju_admin
+db sqlite3 /data/soju.db
+log fs /data/irc.log
+tls /data/certs/cert.pem /data/certs/key.pem
+hostname example.com
+```
 
-**LISTEN_METHOD**, **LISTEN_HOST**, **LISTEN_PORT**
+## Certificates with certbot
 
-- Check the possible listen directives in the [docs](https://git.sr.ht/~emersion/soju/tree/master/item/doc/soju.1.scd)
+If you are using `certbot` to manage your tls certificates, you have to give these to files to `soju`:
 
-### Running the image
+```
+mkdir soju-data/certs
+cp -f certbot-data/live/example.com/privkey.pem   > soju-data/certs/key.pem
+cp -f certbot-data/live/example.com/fullchain.pem > soju-data/certs/cert.pem
+```
 
-**Run the image from the CLI**
-
-`docker run  -e USER='admin' -e PASSWORD='password' -e LISTEN_METHOD='irc+insecure' -e LISTEN_HOST='0.0.0.0' -e LISTEN_PORT='6667' -p 6667:6667 fourstepper/soju`
-
+## Running the image
 
 **Run as part of docker-compose**
 
@@ -36,11 +45,12 @@ services:
       - ./soju-data:/data
     ports:
       - "6667:6667"
-    environment:
-      - USER=admin
-      - PASSWORD=password
-      - LISTEN_METHOD=irc+insecure
-      - LISTEN_HOST=0.0.0.0
-      - LISTEN_PORT=6667
-      - LOG_PATH=/data/irc.log
 ```
+
+`docker-compose up -d --build soju`
+
+## Reloading certificates
+
+If using ircss, when the certificate has changed, issue a SIGHUP to the image:
+
+`docker  kill -s HUP soju`
